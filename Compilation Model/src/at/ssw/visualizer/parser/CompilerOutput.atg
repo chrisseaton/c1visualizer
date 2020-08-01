@@ -212,7 +212,7 @@ HIRInstruction<out IRInstructionImpl res> =     (.  String pinned = ""; String o
 .
 
 HIRName<out String res> =
-    IdentValue<out res>                         (.  if (res.charAt(0) >= '0' && res.charAt(0) <= '9') { res = "v" + res; } .)
+    IdentValue<out res>                         (.  if (res.charAt(0) >= '0' && res.charAt(0) <= '9') { res = "v" + res; res = res.intern(); } .)
 .
 
   

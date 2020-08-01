@@ -36,7 +36,8 @@ public class IRScanner extends Scanner {
     @Override
     protected TokenID parseToken() {
         findTokenBegin();
-        if (ch == EOF) {
+        if (ch == EOF && offset + 1 >= stopOffset) {
+            // only except EOF if we are at the end of the buffer
             return IRTokenContext.EOF_TOKEN;
         } else if (isWhitespace()) {
             return IRTokenContext.WHITESPACE_TOKEN;

@@ -27,10 +27,11 @@
     </target>
 
     <target name="build-zip" depends="src-zip,suite.build-zip" description="Builds a ZIP distribution of the suite, launchers, selected modules from the platform and the src.zip.">
-        <!-- Add src.zip to the archive -->
-        <move file="${dist.dir}/${app.name}-${app.version}_src.zip" tofile="${dist.dir}/src.zip"/>
+        <!-- Add src.zip, changelog, and user guide to the archive -->
         <zip destfile="${dist.dir}/${app.name}.zip" update="true">
-            <zipfileset file="${dist.dir}/src.zip"/>
+            <zipfileset file="${dist.dir}/${app.name}-${app.version}_src.zip" fullpath="${app.name}/src.zip" />
+            <zipfileset file="${basedir}/../CHANGELOG.md" fullpath="${app.name}/CHANGELOG.md"/>
+            <zipfileset file="${basedir}/../www/UserGuide/UserGuide.pdf" fullpath="${app.name}/UserGuide.pdf"/>
         </zip>
         <!-- Rename zip file to include the version -->
         <move file="${dist.dir}/${app.name}.zip" tofile="${dist.dir}/${app.name}-${app.version}.zip" overwrite="true"/>
@@ -39,7 +40,7 @@
 
     <!-- Zip the source code -->
     <target name="src-zip" depends="-init" description="Builds a ZIP distribution of the source code.">
-        <tempfile property="scm.files" destdir="${suite.build.dir}" deleteonexit="true" prefix="scm-files_"/>
+        <tempfile property="scm.files" deleteonexit="true" prefix="scm-files_"/>
         <exec executable="git" output="${scm.files}">
             <arg value="ls-files"/>
         </exec>

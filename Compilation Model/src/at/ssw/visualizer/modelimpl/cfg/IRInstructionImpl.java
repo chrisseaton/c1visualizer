@@ -67,7 +67,7 @@ public class IRInstructionImpl implements IRInstruction {
 
     private String checkIntern(String s) {
         if (s != s.intern()) {
-            throw new InternalError();
+            throw new InternalError("non-interned String passed to IRInstructionImpl constructor");
         }
         return s;
     }

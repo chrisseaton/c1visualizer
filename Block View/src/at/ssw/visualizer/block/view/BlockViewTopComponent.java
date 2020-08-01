@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -51,6 +54,24 @@ final class BlockViewTopComponent extends TopComponent {
             blockTable.getColumnModel().getColumn(i).setPreferredWidth(BlockTableModel.COLUMN_WIDTHS[i]);
         }
         blockTable.getSelectionModel().addListSelectionListener(listSelectionListener);
+        
+        // sorting
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(blockTable.getModel());
+        sorter.setComparator(BlockTableModel.BLOCK_TABLE_NAME_COL_IDX, new Comparator<String>() {
+
+            @Override
+            public int compare(String block1, String block2) {
+                if (block1.charAt(0) == 'B' && block2.charAt(0)=='B') {
+                    try {
+                        return Integer.parseUnsignedInt(block1.substring(1)) - Integer.parseUnsignedInt(block2.substring(1));
+                    } catch(NumberFormatException e) {
+                        // fall-back to string
+                    }
+                }
+                return block1.compareTo(block2);
+            }
+        });
+        blockTable.setRowSorter(sorter);
 
         JScrollPane scrollPane = new JScrollPane(blockTable);
         scrollPane.setViewportBorder(BorderFactory.createEmptyBorder());
@@ -95,7 +116,6 @@ final class BlockViewTopComponent extends TopComponent {
 
         if (curCFG != newCFG) {
             // This resets a user-defined sorting.
-            blockTable.setAutoCreateRowSorter(true);
             tableModel.setControlFlowGraph(newCFG);
             curBlocks = null;
         }
