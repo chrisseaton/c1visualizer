@@ -129,7 +129,7 @@ public class CFGHelper {
                 }
             }
 
-            helper.basicBlock.setValues(helper.name, helper.fromBci, helper.toBci, predecessors, successors, xhandlers, helper.flags, dominator, helper.loopIndex, helper.loopDepth, helper.firstLirId, helper.lastLirId, states, hirInstructions, lirOperations);
+            helper.basicBlock.setValues(helper.name, helper.fromBci, helper.toBci, predecessors, successors, xhandlers, helper.flags, dominator, helper.loopIndex, helper.loopDepth, helper.firstLirId, helper.lastLirId, helper.probability, states, hirInstructions, lirOperations);
         }
 
         resolved = new ControlFlowGraphImpl(shortName, name, basicBlocks);

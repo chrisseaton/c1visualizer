@@ -14,8 +14,8 @@ import javax.swing.table.AbstractTableModel;
  * @author Christian Wimmer
  */
 public class BlockTableModel extends AbstractTableModel {
-    public static final String[] COLUMN_NAMES = new String[]{"Name", "BCI", "Flags", "Loop Depth", "Loop Index", "Dominator", "Predecessors", "Successors", "XHandlers"};
-    public static final int[] COLUMN_WIDTHS = new int[]{60, 60, 60, 80, 80, 60, 120, 120};
+    public static final String[] COLUMN_NAMES = new String[]{"Name", "BCI", "Flags", "Loop Depth", "Loop Index", "Dominator", "Predecessors", "Successors", "XHandlers", "Probability"};
+    public static final int[] COLUMN_WIDTHS = new int[]{60, 60, 60, 80, 80, 60, 120, 120, 120};
 
     private List<BasicBlock> blocks = Collections.emptyList();
 
@@ -33,7 +33,7 @@ public class BlockTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return 9;
+        return COLUMN_NAMES.length;
     }
 
     @Override
@@ -62,6 +62,8 @@ public class BlockTableModel extends AbstractTableModel {
                 return formatBlocks(block.getSuccessors());
             case 8:
                 return formatBlocks(block.getXhandlers());
+            case 9:
+                return Double.isNaN(block.getProbability()) ? "" : (Double)block.getProbability();
             default:
                 throw new Error("invalid column");
         }

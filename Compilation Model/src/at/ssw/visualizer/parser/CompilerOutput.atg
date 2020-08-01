@@ -139,6 +139,7 @@ BasicBlock<out BBHelper helper> =               (.  helper = new BBHelper(); .)
     [ "loop_depth" IntegerValue<out helper.loopDepth> ]
     [ "first_lir_id" IntegerValue<out helper.firstLirId> ]
     [ "last_lir_id" IntegerValue<out helper.lastLirId> ]
+    [ "probability" DoubleValue<out helper.probability> ]
 
     [ StateList<helper> ]
     [ HIR<helper> ]
@@ -330,6 +331,11 @@ IdentValue<out String res> =
 
 IntegerValue<out int res> =                     (.  res = 0; .)
     ident                                       (.  try { res = Integer.parseInt(t.val); } catch (NumberFormatException ex) { SemErr(t.val); } .)
+.
+
+
+DoubleValue<out double res> =                   (.  res = Double.NaN; .)
+    ident                                       (.  try { res = Double.longBitsToDouble(Long.parseLong(t.val)); } catch (NumberFormatException ex) { SemErr(t.val); } .)
 .
 
 

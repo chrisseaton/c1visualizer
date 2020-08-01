@@ -27,11 +27,12 @@ public class BasicBlockImpl implements BasicBlock {
     private int loopDepth;
     private int firstLirId;
     private int lastLirId;
+    private double probability;
     private State[] states;
     private IRInstruction[] hirInstructions;
     private IRInstruction[] lirOperations;
 
-    public void setValues(String name, int fromBci, int toBci, BasicBlock[] predecessors, BasicBlock[] successors, BasicBlock[] xhandlers, String[] flags, BasicBlock dominator, int loopIndex, int loopDepth, int firstLirId, int lastLirId, State[] states, IRInstruction[] hirInstructions, IRInstruction[] lirOperations) {
+    public void setValues(String name, int fromBci, int toBci, BasicBlock[] predecessors, BasicBlock[] successors, BasicBlock[] xhandlers, String[] flags, BasicBlock dominator, int loopIndex, int loopDepth, int firstLirId, int lastLirId, double probability, State[] states, IRInstruction[] hirInstructions, IRInstruction[] lirOperations) {
         this.name = name;
         this.fromBci = fromBci;
         this.toBci = toBci;
@@ -46,6 +47,7 @@ public class BasicBlockImpl implements BasicBlock {
         this.loopDepth = loopDepth;
         this.firstLirId = firstLirId;
         this.lastLirId = lastLirId;
+        this.probability = probability;
 
         this.states = states;
         this.hirInstructions = hirInstructions;
@@ -110,6 +112,10 @@ public class BasicBlockImpl implements BasicBlock {
 
     public int getLastLirId() {
         return lastLirId;
+    }
+
+    public double getProbability() {
+        return probability;
     }
 
     public boolean hasState() {

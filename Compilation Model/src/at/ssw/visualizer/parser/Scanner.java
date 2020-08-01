@@ -264,8 +264,8 @@ class StartStates {
 public class Scanner {
 	static final char EOL = '\n';
 	static final int  eofSym = 0;
-	static final int maxT = 53;
-	static final int noSym = 53;
+	static final int maxT = 54;
+	static final int noSym = 54;
 
 
 	public Buffer buffer; // scanner buffer
@@ -327,30 +327,31 @@ public class Scanner {
 		literals.put("loop_depth", new Integer(20));
 		literals.put("first_lir_id", new Integer(21));
 		literals.put("last_lir_id", new Integer(22));
-		literals.put("end_block", new Integer(23));
-		literals.put("begin_states", new Integer(24));
-		literals.put("begin_stack", new Integer(25));
-		literals.put("end_stack", new Integer(26));
-		literals.put("begin_locks", new Integer(27));
-		literals.put("end_locks", new Integer(28));
-		literals.put("begin_locals", new Integer(29));
-		literals.put("end_locals", new Integer(30));
-		literals.put("end_states", new Integer(31));
-		literals.put("size", new Integer(32));
-		literals.put("begin_HIR", new Integer(35));
-		literals.put("end_HIR", new Integer(36));
-		literals.put("begin_LIR", new Integer(38));
-		literals.put("end_LIR", new Integer(39));
-		literals.put("begin_IR", new Integer(40));
-		literals.put("HIR", new Integer(41));
-		literals.put("LIR", new Integer(42));
-		literals.put("end_IR", new Integer(43));
-		literals.put("begin_intervals", new Integer(45));
-		literals.put("end_intervals", new Integer(46));
-		literals.put("begin_nmethod", new Integer(48));
-		literals.put("end_nmethod", new Integer(49));
-		literals.put("begin_bytecodes", new Integer(50));
-		literals.put("end_bytecodes", new Integer(51));
+		literals.put("probability", new Integer(23));
+		literals.put("end_block", new Integer(24));
+		literals.put("begin_states", new Integer(25));
+		literals.put("begin_stack", new Integer(26));
+		literals.put("end_stack", new Integer(27));
+		literals.put("begin_locks", new Integer(28));
+		literals.put("end_locks", new Integer(29));
+		literals.put("begin_locals", new Integer(30));
+		literals.put("end_locals", new Integer(31));
+		literals.put("end_states", new Integer(32));
+		literals.put("size", new Integer(33));
+		literals.put("begin_HIR", new Integer(36));
+		literals.put("end_HIR", new Integer(37));
+		literals.put("begin_LIR", new Integer(39));
+		literals.put("end_LIR", new Integer(40));
+		literals.put("begin_IR", new Integer(41));
+		literals.put("HIR", new Integer(42));
+		literals.put("LIR", new Integer(43));
+		literals.put("end_IR", new Integer(44));
+		literals.put("begin_intervals", new Integer(46));
+		literals.put("end_intervals", new Integer(47));
+		literals.put("begin_nmethod", new Integer(49));
+		literals.put("end_nmethod", new Integer(50));
+		literals.put("begin_bytecodes", new Integer(51));
+		literals.put("end_bytecodes", new Integer(52));
 
                 literalFirstChar = new boolean[0];
                 for (String literal : literals.keySet()) {
@@ -462,11 +463,11 @@ public class Scanner {
 					if (ch == '*' || ch == '-' || ch >= '0' && ch <= ':' || ch >= 'A' && ch <= 'Z' || ch == '_' || ch >= 'a' && ch <= 'z' || ch == '|') {AddCh(); state = 1; break;}
 					else {t.kind = 1; t.val = new String(tval, 0, tlen); CheckLiteral(); return t;}
 				case 2:
-					{t.kind = 33; break loop;}
-				case 3:
 					{t.kind = 34; break loop;}
+				case 3:
+					{t.kind = 35; break loop;}
 				case 4:
-					{t.kind = 37; break loop;}
+					{t.kind = 38; break loop;}
 				case 5:
 					if (ch == '|') {AddCh(); state = 6; break;}
 					else {state = 0; break;}
@@ -474,11 +475,11 @@ public class Scanner {
 					if (ch == '@') {AddCh(); state = 7; break;}
 					else {state = 0; break;}
 				case 7:
-					{t.kind = 44; break loop;}
+					{t.kind = 45; break loop;}
 				case 8:
-					{t.kind = 47; break loop;}
+					{t.kind = 48; break loop;}
 				case 9:
-					{t.kind = 52; break loop;}
+					{t.kind = 53; break loop;}
 
 			}
 		}

@@ -25,6 +25,7 @@ public class BBHelper {
     protected int loopDepth;
     protected int firstLirId;
     protected int lastLirId;
+    protected double probability = Double.NaN;
     protected List<State> states = new ArrayList<State>();
     protected List<IRInstruction> hirInstructions = new ArrayList<IRInstruction>();
     protected List<IRInstruction> lirOperations = new ArrayList<IRInstruction>();

@@ -23,7 +23,7 @@ import at.ssw.visualizer.modelimpl.bc.BytecodesImpl;
 public class Parser {
 	public static final int _EOF = 0;
 	public static final int _ident = 1;
-	public static final int maxT = 53;
+	public static final int maxT = 54;
 
         static final boolean _T = true;
         static final boolean _x = false;
@@ -167,10 +167,10 @@ private String longName(String name) {
 				lastComp = curComp; 
 			} else if (la.kind == 7) {
 				lastCFG = CFG(lastComp);
-			} else if (la.kind == 45) {
+			} else if (la.kind == 46) {
 				lastIL = IntervalList(lastCFG);
 				lastComp.elements.add(lastIL); 
-			} else if (la.kind == 48) {
+			} else if (la.kind == 49) {
 				NativeMethod(lastCFG);
 			} else {
 				Bytecodes(lastCFG);
@@ -221,7 +221,7 @@ private String longName(String name) {
 		IntervalListImpl  res;
 		IntervalListHelper helper = new IntervalListHelper(); IntervalHelper interval; 
 		if (controlFlowGraph == null) SemErr("must have CFG before intervals"); 
-		Expect(45);
+		Expect(46);
 		Expect(3);
 		String name = StringValue();
 		helper.name = longName(name); helper.shortName = shortName(name); 
@@ -230,33 +230,33 @@ private String longName(String name) {
 			helper.add(interval); 
 		}
 		res = helper.resolve(this, controlFlowGraph); 
-		Expect(46);
+		Expect(47);
 		return res;
 	}
 
 	void NativeMethod(ControlFlowGraphImpl cfg) {
-		Expect(48);
+		Expect(49);
 		String res = NoTrimFreeValue();
 		cfg.setNativeMethod(new NativeMethodImpl(cfg, res)); 
-		Expect(49);
+		Expect(50);
 	}
 
 	void Bytecodes(ControlFlowGraphImpl cfg) {
-		Expect(50);
+		Expect(51);
 		String res = FreeValue();
 		cfg.setBytecodes(new BytecodesImpl(cfg, res)); 
-		Expect(51);
+		Expect(52);
 	}
 
 	String  StringValue() {
 		String  res;
-		Expect(52);
+		Expect(53);
 		int beg = la.pos; 
 		while (StartOf(2)) {
 			Get();
 		}
 		res = scanner.buffer.GetString(beg, la.pos).trim().intern(); 
-		Expect(52);
+		Expect(53);
 		return res;
 	}
 
@@ -314,26 +314,30 @@ private String longName(String name) {
 			Get();
 			helper.lastLirId = IntegerValue();
 		}
-		if (la.kind == 24) {
+		if (la.kind == 23) {
+			Get();
+			helper.probability = DoubleValue();
+		}
+		if (la.kind == 25) {
 			StateList(helper);
 		}
-		if (la.kind == 35) {
+		if (la.kind == 36) {
 			HIR(helper);
 		}
-		if (la.kind == 38) {
+		if (la.kind == 39) {
 			LIR(helper);
 		}
-		while (la.kind == 40) {
+		while (la.kind == 41) {
 			IR(helper);
 		}
-		Expect(23);
+		Expect(24);
 		return helper;
 	}
 
 	String[]  StringList() {
 		String[]  res;
 		ArrayList<String> list = new ArrayList<String>(); String item; 
-		while (la.kind == 52) {
+		while (la.kind == 53) {
 			item = StringValue();
 			list.add(item); 
 		}
@@ -341,69 +345,77 @@ private String longName(String name) {
 		return res;
 	}
 
+	double  DoubleValue() {
+		double  res;
+		res = Double.NaN; 
+		Expect(1);
+		try { res = Double.longBitsToDouble(Long.parseLong(t.val)); } catch (NumberFormatException ex) { SemErr(t.val); } 
+		return res;
+	}
+
 	void StateList(BBHelper helper) {
-		Expect(24);
-		while (la.kind == 25 || la.kind == 27 || la.kind == 29) {
-			if (la.kind == 25) {
+		Expect(25);
+		while (la.kind == 26 || la.kind == 28 || la.kind == 30) {
+			if (la.kind == 26) {
 				Get();
 				StateImpl state = State("Operands");
 				helper.states.add(state); 
-				Expect(26);
-			} else if (la.kind == 27) {
+				Expect(27);
+			} else if (la.kind == 28) {
 				Get();
 				StateImpl state = State("Locks");
 				helper.states.add(state); 
-				Expect(28);
+				Expect(29);
 			} else {
 				Get();
 				StateImpl state = State("Locals");
 				helper.states.add(state); 
-				Expect(30);
+				Expect(31);
 			}
 		}
-		Expect(31);
+		Expect(32);
 	}
 
 	void HIR(BBHelper helper) {
-		Expect(35);
-		while (la.kind == 1 || la.kind == 37) {
+		Expect(36);
+		while (la.kind == 1 || la.kind == 38) {
 			IRInstructionImpl ins = HIRInstruction();
 			helper.hirInstructions.add(ins); 
 		}
-		Expect(36);
+		Expect(37);
 	}
 
 	void LIR(BBHelper helper) {
-		Expect(38);
+		Expect(39);
 		while (la.kind == 1) {
 			IRInstructionImpl op = LIROperation();
 			helper.lirOperations.add(op); 
 		}
-		Expect(39);
+		Expect(40);
 	}
 
 	void IR(BBHelper helper) {
-		Expect(40);
-		if (la.kind == 41) {
+		Expect(41);
+		if (la.kind == 42) {
 			Get();
-			while (la.kind == 1 || la.kind == 44) {
+			while (la.kind == 1 || la.kind == 45) {
 				IRInstructionImpl op = IRInstruction();
 				helper.hirInstructions.add(op); 
 			}
-		} else if (la.kind == 42) {
+		} else if (la.kind == 43) {
 			Get();
-			while (la.kind == 1 || la.kind == 44) {
+			while (la.kind == 1 || la.kind == 45) {
 				IRInstructionImpl op = IRInstruction();
 				helper.lirOperations.add(op); 
 			}
-		} else SynErr(54);
-		Expect(43);
+		} else SynErr(55);
+		Expect(44);
 	}
 
 	StateImpl  State(String kind) {
 		StateImpl  res;
 		String method = ""; ArrayList<StateEntryImpl> entries = new ArrayList<StateEntryImpl>(); 
-		Expect(32);
+		Expect(33);
 		int size = IntegerValue();
 		if (la.kind == 4) {
 			Get();
@@ -422,17 +434,17 @@ private String longName(String name) {
 		String[] operands = null; String operand = null; 
 		int index = IntegerValue();
 		String name = HIRName();
-		if (la.kind == 33) {
+		if (la.kind == 34) {
 			Get();
 			ArrayList<String> operandsList = new ArrayList<String>(); 
 			while (la.kind == 1) {
 				String opd = HIRName();
 				operandsList.add(opd); 
 			}
-			Expect(34);
+			Expect(35);
 			operands = operandsList.toArray(new String[operandsList.size()]); 
 		}
-		if (la.kind == 52) {
+		if (la.kind == 53) {
 			operand = StringValue();
 		}
 		res = new StateEntryImpl(index, name, operands, operand); 
@@ -449,13 +461,13 @@ private String longName(String name) {
 	IRInstructionImpl  HIRInstruction() {
 		IRInstructionImpl  res;
 		String pinned = ""; String operand = null; 
-		if (la.kind == 37) {
+		if (la.kind == 38) {
 			Get();
 			pinned = "."; 
 		}
 		int bci = IntegerValue();
 		int useCount = IntegerValue();
-		if (la.kind == 52) {
+		if (la.kind == 53) {
 			operand = StringValue();
 		}
 		String name = HIRName();
@@ -471,7 +483,7 @@ private String longName(String name) {
 			Get();
 		}
 		res = scanner.buffer.GetString(beg, la.pos).trim(); if (res.indexOf('\r') != -1) { res = res.replace("\r\n", "\n"); } res = res.intern(); 
-		Expect(44);
+		Expect(45);
 		return res;
 	}
 
@@ -498,7 +510,7 @@ private String longName(String name) {
 			String value = FreeValue();
 			data.put(name.intern(), value.intern()); 
 		}
-		Expect(44);
+		Expect(45);
 		res = new IRInstructionImpl(data); 
 		return res;
 	}
@@ -508,14 +520,14 @@ private String longName(String name) {
 		helper = new IntervalHelper(); RangeImpl range; UsePositionImpl usePosition; 
 		helper.regNum = IdentValue();
 		helper.type = IdentValue();
-		if (la.kind == 52) {
+		if (la.kind == 53) {
 			helper.operand = StringValue();
 		}
 		helper.splitParent = IdentValue();
 		helper.registerHint = IdentValue();
 		range = Range();
 		helper.ranges.add(range); 
-		while (la.kind == 33) {
+		while (la.kind == 34) {
 			range = Range();
 			helper.ranges.add(range); 
 		}
@@ -529,11 +541,11 @@ private String longName(String name) {
 
 	RangeImpl  Range() {
 		RangeImpl  res;
-		Expect(33);
+		Expect(34);
 		int from = IntegerValue();
-		Expect(47);
+		Expect(48);
 		int to = IntegerValue();
-		Expect(33);
+		Expect(34);
 		res = new RangeImpl(from, to); 
 		return res;
 	}
@@ -553,7 +565,7 @@ private String longName(String name) {
 			Get();
 		}
 		res = scanner.buffer.GetString(beg, la.pos); if (res.indexOf('\r') != -1) { res = res.replace("\r\n", "\n"); } res = res.intern(); 
-		Expect(44);
+		Expect(45);
 		return res;
 	}
 
@@ -570,10 +582,10 @@ private String longName(String name) {
 	}
 
 	private boolean[][] set = {
-		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
-		{_x,_x,_T,_x, _x,_x,_x,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_T,_x,_x, _T,_x,_T,_x, _x,_x,_x},
-		{_x,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _x,_T,_x},
-		{_x,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _x,_T,_T,_T, _T,_T,_T,_T, _T,_T,_x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x},
+		{_x,_x,_T,_x, _x,_x,_x,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_T,_x, _x,_T,_x,_T, _x,_x,_x,_x},
+		{_x,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_x,_T,_x},
+		{_x,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_T,_T,_T, _T,_x,_T,_T, _T,_T,_T,_T, _T,_T,_T,_x}
 
 	};
 } // end Parser
@@ -626,38 +638,39 @@ class Errors {
 			case 20: s = "\"loop_depth\" expected"; break;
 			case 21: s = "\"first_lir_id\" expected"; break;
 			case 22: s = "\"last_lir_id\" expected"; break;
-			case 23: s = "\"end_block\" expected"; break;
-			case 24: s = "\"begin_states\" expected"; break;
-			case 25: s = "\"begin_stack\" expected"; break;
-			case 26: s = "\"end_stack\" expected"; break;
-			case 27: s = "\"begin_locks\" expected"; break;
-			case 28: s = "\"end_locks\" expected"; break;
-			case 29: s = "\"begin_locals\" expected"; break;
-			case 30: s = "\"end_locals\" expected"; break;
-			case 31: s = "\"end_states\" expected"; break;
-			case 32: s = "\"size\" expected"; break;
-			case 33: s = "\"[\" expected"; break;
-			case 34: s = "\"]\" expected"; break;
-			case 35: s = "\"begin_HIR\" expected"; break;
-			case 36: s = "\"end_HIR\" expected"; break;
-			case 37: s = "\".\" expected"; break;
-			case 38: s = "\"begin_LIR\" expected"; break;
-			case 39: s = "\"end_LIR\" expected"; break;
-			case 40: s = "\"begin_IR\" expected"; break;
-			case 41: s = "\"HIR\" expected"; break;
-			case 42: s = "\"LIR\" expected"; break;
-			case 43: s = "\"end_IR\" expected"; break;
-			case 44: s = "\"<|@\" expected"; break;
-			case 45: s = "\"begin_intervals\" expected"; break;
-			case 46: s = "\"end_intervals\" expected"; break;
-			case 47: s = "\",\" expected"; break;
-			case 48: s = "\"begin_nmethod\" expected"; break;
-			case 49: s = "\"end_nmethod\" expected"; break;
-			case 50: s = "\"begin_bytecodes\" expected"; break;
-			case 51: s = "\"end_bytecodes\" expected"; break;
-			case 52: s = "\"\\\"\" expected"; break;
-			case 53: s = "??? expected"; break;
-			case 54: s = "invalid IR"; break;
+			case 23: s = "\"probability\" expected"; break;
+			case 24: s = "\"end_block\" expected"; break;
+			case 25: s = "\"begin_states\" expected"; break;
+			case 26: s = "\"begin_stack\" expected"; break;
+			case 27: s = "\"end_stack\" expected"; break;
+			case 28: s = "\"begin_locks\" expected"; break;
+			case 29: s = "\"end_locks\" expected"; break;
+			case 30: s = "\"begin_locals\" expected"; break;
+			case 31: s = "\"end_locals\" expected"; break;
+			case 32: s = "\"end_states\" expected"; break;
+			case 33: s = "\"size\" expected"; break;
+			case 34: s = "\"[\" expected"; break;
+			case 35: s = "\"]\" expected"; break;
+			case 36: s = "\"begin_HIR\" expected"; break;
+			case 37: s = "\"end_HIR\" expected"; break;
+			case 38: s = "\".\" expected"; break;
+			case 39: s = "\"begin_LIR\" expected"; break;
+			case 40: s = "\"end_LIR\" expected"; break;
+			case 41: s = "\"begin_IR\" expected"; break;
+			case 42: s = "\"HIR\" expected"; break;
+			case 43: s = "\"LIR\" expected"; break;
+			case 44: s = "\"end_IR\" expected"; break;
+			case 45: s = "\"<|@\" expected"; break;
+			case 46: s = "\"begin_intervals\" expected"; break;
+			case 47: s = "\"end_intervals\" expected"; break;
+			case 48: s = "\",\" expected"; break;
+			case 49: s = "\"begin_nmethod\" expected"; break;
+			case 50: s = "\"end_nmethod\" expected"; break;
+			case 51: s = "\"begin_bytecodes\" expected"; break;
+			case 52: s = "\"end_bytecodes\" expected"; break;
+			case 53: s = "\"\\\"\" expected"; break;
+			case 54: s = "??? expected"; break;
+			case 55: s = "invalid IR"; break;
 			default: s = "error " + n; break;
 		}
 		printMsg(line, col, s);

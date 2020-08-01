@@ -33,6 +33,8 @@ public interface BasicBlock {
 
     public int getLastLirId();
 
+    public double getProbability();
+
     public boolean hasState();
 
     public List<State> getStates();
